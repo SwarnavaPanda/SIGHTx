@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Image Segmentation Comparison Tool
 
 This application compares three different image segmentation methods:
@@ -78,3 +79,7 @@ Higher values indicate better segmentation performance.
 - OpenCV
 - Matplotlib
 - Pillow 
+=======
+# SIGHTx
+SIGHTx analyzes image datasets using patch-based segmentation, ranks algorithmic results, and reveals the best output with performance metrics and explanation. Visual, intelligent, and user-friendly.
+>>>>>>> c9375c19b239c3a263ce691e23ec8097a466d76b

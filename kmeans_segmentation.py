@@ -57,4 +57,70 @@ if __name__ == "__main__":
     metrics = evaluate_segmentation(original_image, segmented_image)
     print("K-means Segmentation Metrics:")
     print(f"Adjusted Rand Index: {metrics['adjusted_rand_index']:.4f}")
-    print(f"Normalized Mutual Information: {metrics['normalized_mutual_info']:.4f}") 
+    print(f"Normalized Mutual Information: {metrics['normalized_mutual_info']:.4f}")
+
+'''import numpy as np
+from sklearn.cluster import MiniBatchKMeans
+from skimage import io, color
+import cv2
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
+
+def minibatch_kmeans_segmentation(image_path, n_clusters=3):
+    # Read the image
+    image = io.imread(image_path)
+    
+    # Convert RGB to grayscale if needed
+    if len(image.shape) == 3:
+        image = color.rgb2gray(image)
+
+    # Reshape into (num_pixels, 1)
+    pixels = image.reshape(-1, 1)
+
+    # Apply MiniBatchKMeans
+    kmeans = MiniBatchKMeans(n_clusters=n_clusters, random_state=42, batch_size=1024)
+    labels = kmeans.fit_predict(pixels)
+
+    # Reshape labels to original shape
+    segmented = labels.reshape(image.shape)
+
+    # Normalize for visualization
+    segmented = (segmented - segmented.min()) / (segmented.max() - segmented.min())
+
+    return segmented, kmeans
+
+def evaluate_segmentation(original, segmented):
+    # Flatten images
+    original_flat = original.reshape(-1)
+    segmented_flat = segmented.reshape(-1)
+
+    # Compute metrics
+    ari = adjusted_rand_score(original_flat, segmented_flat)
+    nmi = normalized_mutual_info_score(original_flat, segmented_flat)
+
+    return {
+        'adjusted_rand_index': ari,
+        'normalized_mutual_info': nmi
+    }
+
+if __name__ == "__main__":
+    # Example usage
+    image_path = "test_image.jpg"  # Replace with your actual image path
+    segmented_image, kmeans = minibatch_kmeans_segmentation(image_path)
+
+    # Save the segmented result
+    cv2.imwrite("minibatch_segmented.jpg", (segmented_image * 255).astype(np.uint8))
+
+    # Evaluate
+    original_image = io.imread(image_path)
+    if len(original_image.shape) == 3:
+        original_image = color.rgb2gray(original_image)
+
+    metrics = evaluate_segmentation(original_image, segmented_image)
+    print("MiniBatchKMeans Segmentation Metrics:")
+    print(f"Adjusted Rand Index: {metrics['adjusted_rand_index']:.4f}")
+    print(f"Normalized Mutual Information: {metrics['normalized_mutual_info']:.4f}")'''
+ 
+    
+ 
+
+

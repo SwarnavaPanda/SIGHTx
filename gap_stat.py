@@ -83,7 +83,7 @@ plt.title(f"Optimal Clusters: {optimal_k}")
 plt.grid(True)
 plt.show()'''
 
-import numpy as np
+'''import numpy as np
 import cv2
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances, calinski_harabasz_score
@@ -156,7 +156,7 @@ def find_optimal_k_ch(data, max_k=10):
     return optimal_k
 
 # === Main Function ===
-def get_optimal_clusters(image_path, max_k=10, pixel_limit=20000):
+def get_optimal_clusters(image_path, max_k=10, pixel_limit=10000):
     # Convert TIFF if needed
     if image_path.lower().endswith((".tif", ".tiff")):
         image_path = convert_tiff_to_jpg(image_path)
@@ -186,10 +186,70 @@ def give_res(imp):
     else:
         optimal_k1=optimal_k
     #print("Optimal number of clusters:", optimal_k)
-    return optimal_k,optimal_k1
+    return optimal_k,optimal_k1'''
     
 '''if __name__ == "__main__":
     image_path = "shiv, manesh patil.png"
     optimal_k = get_optimal_clusters(image_path, max_k=10)
     print("Optimal number of clusters:", optimal_k)'''
 
+import numpy as np
+import cv2
+from sklearn.cluster import KMeans
+from sklearn.metrics import calinski_harabasz_score
+from original_out import convert_tiff_to_jpg  # Your own TIFF-to-JPG converter
+
+# === Load Image Pixels ===
+def load_image_pixels(image_path, grayscale=True):
+    flag = cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR
+    image = cv2.imread(image_path, flag)
+    if grayscale:
+        pixels = image.reshape(-1, 1)
+    else:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        pixels = image.reshape(-1, 3)
+    return pixels
+
+# === Calinski-Harabasz Index Based Optimal K ===
+def find_optimal_k_ch(data, max_k=10):
+    scores = []
+    ks = range(2, max_k + 1)
+
+    for k in ks:
+        kmeans = KMeans(n_clusters=k, random_state=42).fit(data)
+        labels = kmeans.labels_
+        score = calinski_harabasz_score(data, labels)
+        scores.append(score)
+
+    optimal_k = ks[np.argmax(scores)]
+    return optimal_k
+
+# === Main Function ===
+def get_optimal_clusters(image_path, max_k=10):
+    # Convert TIFF if needed
+    if image_path.lower().endswith((".tif", ".tiff")):
+        image_path = convert_tiff_to_jpg(image_path)
+
+    # Load pixels (grayscale to save memory)
+    pixels = load_image_pixels(image_path, grayscale=True)
+
+    # Use CH Index
+    print(f"[INFO] Using Calinski-Harabasz Index for {pixels.shape[0]} pixels")
+    optimal_k = find_optimal_k_ch(pixels, max_k=max_k)
+
+    return optimal_k
+
+# === Wrapper Function ===
+def give_res(image_path):
+    optimal_k = get_optimal_clusters(image_path, max_k=10)
+    optimal_k1 = min(optimal_k, 5)  # Cap at 5 if needed
+    return optimal_k, optimal_k1
+
+# === Example Usage ===
+'''
+if __name__ == "__main__":
+    image_path = "shiv, manesh patil.png"
+    opt_k, capped_k = give_res(image_path)
+    print("Optimal number of clusters:", opt_k)
+    print("Capped (<=5) clusters used for segmentation:", capped_k)
+'''

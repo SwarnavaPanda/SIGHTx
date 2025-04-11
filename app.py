@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, send_file, url_for
 import os
 from werkzeug.utils import secure_filename
 import numpy as np
-from kmeans_segmentation import kmeans_segmentation
+from kmeans_segmentation import kmeans_segmentation #minibatch_kmeans_segmentation 
 from multi_otsu_segmentation import multi_otsu_segmentation
 from normal_thresholding import normal_thresholding
 import cv2
@@ -126,14 +126,14 @@ def upload_file():
         result_filenames = {}
         
         # K-means segmentation
-        kmeans_result, _ = kmeans_segmentation(filepath,opti_num)
+        kmeans_result, _ = kmeans_segmentation(filepath,3)
         segmentations['kmeans'] = kmeans_result
         result_filenames['kmeans'] = save_image(kmeans_result, 
                                               'kmeans_result.jpg', 
                                               app.config['STATIC_FOLDER'])
         
         # Multi-Otsu segmentation
-        multi_otsu_result, _ = multi_otsu_segmentation(filepath,opti_num1)
+        multi_otsu_result, _ = multi_otsu_segmentation(filepath,3)
         segmentations['multi_otsu'] = multi_otsu_result
         result_filenames['multi_otsu'] = save_image(multi_otsu_result, 
                                                   'multi_otsu_result.jpg', 

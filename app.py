@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 from original_out import convert_tiff_to_jpg
 from gap_stat import give_res
+from PIL import Image 
+from totalPixel import get_total_pixels
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -75,6 +77,13 @@ def upload_file():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
+        
+        Total_p=get_total_pixels(filepath)
+        
+        if(Total_p>512*512):
+            img = Image.open(filepath)
+            img = img.resize((512, 512))
+            img.save(filepath)
         
         #find optimal number of cluster for this dataset
         opti_num,opti_num1=give_res(filepath)
